@@ -1,0 +1,64 @@
+---
+title: "Movie Budget vs Movie Earnings"
+author: "Heath Wyatt Price"
+date: "6/20/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Getting Everything Set Up
+
+Before we start deep diving into the data we need to import the necessary packages as well as import the data set. We don't need much for this project.
+
+```{r}
+library(dplyr)
+library(skimr)
+library(ggplot2)
+library(ggcorrplot)
+movies <- read.csv("portfolio_projects/Excel/movies.csv")
+```
+
+Let's take a quick peek at some of the data set so we know what we are working with.
+```{r}
+
+skim_without_charts(movies)
+```
+Good to see there are no missing values in our data set.
+
+
+After looking more thoroughly through the data set the only issue may be that the release date and release year columns have a few discrepancies, but neither of those impact what we will be looking at so we are good to go. But first, let's make sure there aren't any duplicates.
+```{r}
+movies <- distinct(movies)
+```
+
+
+## Looking for a Correlation
+
+Since we are looking for a correlation between a movies' budget and the movies' gross earnings, let's start with a scatterplot.
+
+```{r}
+ggplot(data = movies) + geom_point(mapping = aes(x = budget, y = gross)) + ggtitle("Budget vs Gross Earnings") + xlab("Budget for Film") + ylab("Gross Earnings")
+```
+
+While you can get the general idea from just a scatter plot, let's go ahead and add a regression line and add some color to make things more clear.
+
+```{r}
+ggplot(data = movies) + geom_point(mapping = aes(x = budget, y = gross, colour = "red")) + ggtitle("Budget vs Gross Earnings") + xlab("Budget for Film") + ylab("Gross Earnings") + geom_abline(color = 'blue') + guides(color = FALSE)
+```
+
+Even though it can be seen in the above plot, we can get a further understanding of this correlation by quantifying it.
+
+```{r}
+corr_movies <- cor(movies[, sapply(movies, is.numeric)],
+    use = "complete.obs", method = "pearson")
+ggcorrplot(corr_movies, lab = TRUE)
+```
+
+As you can see in the correlation matrix, budget and gross earnings do indeed have a correlation.
+
+## Conclusion
+I appreciate you taking the time to look through this portfolio project of mine. This is just a small sample of what all I know how to do using the R language. 
